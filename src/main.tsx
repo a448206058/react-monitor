@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
-import App from './App'
+import { BrowserRouter } from 'react-router-dom'
+import '@styles/index.scss'
+import { renderRoutes } from 'react-router-config'
+import routes from './routes'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  { renderRoutes(routes) }
   document.getElementById('root')
 )
