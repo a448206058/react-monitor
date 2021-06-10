@@ -1,21 +1,6 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/config/*": ["./src/config/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/common/*": ["./src/common/*"],
-      "@/assets/*": ["./src/assets/*"],
-      "@/pages/*": ["./src/pages/*"],
-      "@/routes/*": ["./src/routes/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/store/*": ["./src/store/*"]
-    },
-    "typeRoots": [
-      "./typings/"
-    ],
+    "experimentalDecorators": true,
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["vite/client"],
@@ -30,7 +15,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["./typings/", "./node_modules/@types/"]
   },
   "include": ["./src", "./typings", "./vite.config.ts"],
   "exclude": ["node_modules"]
