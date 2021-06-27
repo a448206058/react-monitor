@@ -1,9 +1,12 @@
 import { useStores } from '@/hooks'
 import { observer } from 'mobx-react'
-import * as React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './index.module.less'
-import { Card, Divider, Row, Col, Progress, Menu } from 'antd'
+import { Card, Divider, Row, Col, Progress, Menu, message } from 'antd'
+import type { TableListItem } from './data.d';
+import { queryRule, updateRule, addRule, removeRule } from './service';
+import axios from 'axios';
 import {
   Html5TwoTone,
   FundFilled,
@@ -22,11 +25,66 @@ interface IHomeProps {
 
 const { SubMenu } = Menu
 
+
+/**
+ * @en-US Add node
+ * @zh-CN 添加节点
+ * @param fields
+ */
+const handleAdd = async (fields: TableListItem) => {
+  const hide = message.loading('Adding');
+  try {
+    await queryRule({ ...fields });
+    hide();
+    message.success('Added successfully');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Adding failed, please try again!');
+    return false;
+  }
+};
+
 const Home: React.FC<any> = observer((props) => {
   const { backurl, title, history } = props
 
   const counterStore = useStores('counterStore')
   const commonStore = useStores('commonStore')
+
+  let contentList = [];
+  let isLoading = false;
+
+
+  const [data1, setData] = useState({ hits: [] });
+
+  // useEffect(async () => {
+  //   const fetchData = async () => {
+  //     const result = await queryRule();
+  //     contentList = result.data.rows;
+  //     setData(result.data.rows);
+  //     // console.log(contentList)
+  //     // isLoading = true;
+  //   };
+  //   fetchData();
+  // }, []);
+
+  // const fetchData = async () => {
+  //   const result = await queryRule();
+  //   contentList = result.data.rows;
+  //   setData(result.data.rows);
+  //   // console.log(contentList)
+  //   isLoading = true;
+  // };
+
+  // fetchData();
+
+
+  // setTimeout(() => {
+  //   isLoading = true;
+  //   console.log(contentList)
+  // }, 8000)
+
+
 
   var data = [
     ['2000-06-05', 116],
@@ -198,7 +256,15 @@ const Home: React.FC<any> = observer((props) => {
 
   const cardList = (
     <Row wrap>
-      {content.map((item) => {
+      <Col span={8} className="ml-4 mb-4">
+        {addCard}
+      </Col>
+    </Row>
+  )
+
+  const cardList1 = (
+    <Row wrap>
+      {contentList.map((item) => {
         return (
           <Col span={8} className="ml-4 mb-4">
             {card}
@@ -213,16 +279,7 @@ const Home: React.FC<any> = observer((props) => {
 
   return (
     <div className="page">
-      {/* <div className={styles.title}>Welcome Home {title}</div>
-      <div className={styles.result}>current counter：{counterStore.counter}</div>
-      <div className={styles.result}>current theme：{commonStore.theme}</div>
-      <p className={styles.row}>
-        <Link to="/h5/">H5 模块</Link>
-      </p>
-      <p className={styles.row}>
-        <Link to="/hybird/">hybird 模块</Link>
-      </p> */}
-      {cardList}
+      {isLoading ? cardList1 : cardList}
     </div>
   )
 })
