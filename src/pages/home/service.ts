@@ -2,8 +2,17 @@ import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
 export async function queryRule(params?: TableListParams) {
-  return request('/api/rule', {
+  return request('/api/v1/project/list', {
     params,
+  });
+}
+
+export async function queryAlive(params?: TableListParams) {
+  return request('/api/v1/server/getAliveCusInRealTime', {
+    method: 'POST',
+    data: {
+      ...params
+    },
   });
 }
 

@@ -9,28 +9,6 @@
 
   <body>
     <div id="root"></div>
-    <script>
-      var webMonitorId = 'webfunny_100'
-      var url = window.location.href
-      if (url.indexOf('prod') !== -1) {
-        // 生产环境
-        webMonitorId = 'webfunny_101'
-      } else if (url.indexOf('staging') !== -1) {
-        // staging环境
-        webMonitorId = 'webfunny_102'
-      } else if (url.indexOf('qa') !== -1) {
-        // 测试环境
-        webMonitorId = 'webfunny_103'
-      }
-      window.sessionStorage.CUSTOMER_WEB_MONITOR_ID = webMonitorId
-
-      // window.addEventListener('error', (args) => {
-      //   console.log('######error', error)
-      // })
-
-      /** 这里插入探针代码 */
-    </script>
-    <script type="text/javascript" src="./monitor.min.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

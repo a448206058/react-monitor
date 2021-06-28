@@ -1,10 +1,35 @@
 import { useStores } from '@/hooks'
 import { observer } from 'mobx-react'
 import React from 'react'
-import { Form, Input, Button, Checkbox, Select } from 'antd'
+import { Form, Input, Button, Checkbox, Select, message } from 'antd'
+import type { TableListItem } from './data.d';
 import { withRouter } from 'react-router-dom'
+import { addRule } from './service';
 
 const { Option } = Select
+
+/**
+ * @en-US Add node
+ * @zh-CN 添加节点
+ * @param fields
+ */
+const handleAdd = async (fields: TableListItem) => {
+  const hide = message.loading('Adding');
+  try {
+    fields.title = fields.projectName;
+    fields.author = 'liu';
+    fields.content = 'hehe';
+    fields.category = '111';
+    await addRule({ ...fields });
+    hide();
+    message.success('Added successfully');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Adding failed, please try again!');
+    return false;
+  }
+};
 
 const AddProject: React.FC = observer((props) => {
   const counterStore = useStores('counterStore')
@@ -19,6 +44,7 @@ const AddProject: React.FC = observer((props) => {
 
   const onFinish = (values: any) => {
     console.log('Success:', values)
+    handleAdd(values);
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -40,25 +66,26 @@ const AddProject: React.FC = observer((props) => {
     >
       <Form.Item
         label="项目名称"
-        name="username"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        name="projectName"
+        rules={[{ required: true, message: 'Please input your projectName!' }]}
       >
         <Input className="wd_200" />
       </Form.Item>
 
       <Form.Item
-        label="所属团队"
-        name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        label="监控ID"
+        name="webMonitorId"
+        rules={[{ required: true, message: 'Please input your webMonitorId!' }]}
       >
-        <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+        {/* <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
           <Option value="jack">Jack</Option>
           <Option value="lucy">Lucy</Option>
           <Option value="disabled" disabled>
             Disabled
           </Option>
           <Option value="Yiminghe">yiminghe</Option>
-        </Select>
+        </Select> */}
+        <Input className="wd_200" />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
