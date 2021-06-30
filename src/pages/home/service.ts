@@ -7,8 +7,35 @@ export async function queryRule(params?: TableListParams) {
   });
 }
 
+export async function queryCount(params?: TableListParams) {
+  return request('/api/v1/customerPVCount', {
+    method: 'POST',
+    data: {
+      ...params
+    },
+  });
+}
+
 export async function queryAlive(params?: TableListParams) {
-  return request('/api/v1/server/getAliveCusInRealTime', {
+  return request('/api/v1/customerPVActive', {
+    method: 'POST',
+    data: {
+      ...params
+    },
+  });
+}
+
+export async function queryNew(params?: TableListParams) {
+  return request('/api/v1/customerPVNew', {
+    method: 'POST',
+    data: {
+      ...params
+    },
+  });
+}
+
+export async function queryOld(params?: TableListParams) {
+  return request('/api/v1/customerPVOld', {
     method: 'POST',
     data: {
       ...params

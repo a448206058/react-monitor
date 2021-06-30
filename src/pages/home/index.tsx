@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import styles from './index.module.less'
 import { Card, Divider, Row, Col, Progress, Menu, message } from 'antd'
 import type { TableListItem } from './data.d';
-import { queryRule, queryAlive, updateRule, addRule, removeRule } from './service';
+import { queryRule, queryCount, queryAlive, queryNew, queryOld, updateRule, addRule, removeRule } from './service';
 import axios from 'axios';
 import {
   Html5TwoTone,
@@ -18,6 +18,7 @@ import 'antd/dist/antd.css'
 import classNames from 'classnames'
 import ReactEcharts from 'echarts-for-react'
 import Item from 'antd/lib/list/Item'
+import { number } from 'echarts'
 
 interface IHomeProps {
   title: string
@@ -28,7 +29,24 @@ const { SubMenu } = Menu
 
 let contentList: string[] = [];
 
-let isLoading: boolean = false;
+let isLoading = false;
+
+const option = {
+  xAxis: {
+    type: 'category',
+    data: []
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [820, 932, 901, 934, 1290, 1330, 1320],
+      type: 'line',
+      smooth: false
+    }
+  ]
+}
 
 
 /**
@@ -60,41 +78,64 @@ const Home: React.FC<any> = observer((props) => {
   const counterStore = useStores('counterStore')
   const commonStore = useStores('commonStore')
   const [repos, setRepos] = React.useState([])
-  const [alives, setAlive] = React.useState([])
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(async () => {
     const hide = message.loading('Loading');
     setLoading(true)
     const result = await queryRule();
-    const aliveValue = await queryAlive({webMonitorId: result.data.rows[1].webMonitorId});
-    setRepos(result.data.rows)
-    setAlive(aliveValue.data.rows)
-    console.log(aliveValue)
-    setLoading(false)
-    message.success('Loading successfully');
-    hide();
+    result.data.rows.map(async (item: object) => {
+      if (!item.webMonitorId) {
+        item.webMonitorId = "-1";
+      }
+      const value = await queryCount({ id: item.webMonitorId });
+      let newValue = (await queryNew({ id: item.webMonitorId })).data;
+      const oldValue = (await queryOld({ id: item.webMonitorId })).data;
+      const activeValue = (await queryAlive({ id: item.webMonitorId })).data;
+      item.allCount = value.data[0].count;
+      item.oldCount = oldValue.length;
+      item.activeCount = newValue.length;
+      item.activeValue = activeValue;
+      let oldValueSet = new Set();
+      oldValue.map((item: Object) => {
+        oldValueSet.add(item.customerKey);
+      })
+      newValue = newValue.filter(item => {
+        return !oldValueSet.has(item.customerKey)
+      })
+      item.newCount = newValue.length;
+      item.option = {
+        xAxis: {
+          type: 'category',
+          data: []
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: [],
+            type: 'line',
+            smooth: false
+          }
+        ]
+      };
+      activeValue.map(items => {
+        item.option.xAxis.data.push(items.days)
+        item.option.series[0].data.push(items.COUNT);
+      })
+    })
+    setTimeout(() => {
+      setRepos(result.data.rows)
+      setLoading(false)
+      message.success('Loading successfully');
+      hide();
+    }, 300)
+
+
   }, [])
 
-
-  const option = {
-    xAxis: {
-      type: 'category',
-      data: []
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line',
-        smooth: false
-      }
-    ]
-  }
-
-  const EchartsPie = () => <ReactEcharts option={option} className={'react_for_echarts'} />
+  const EchartsPie = () => <ReactEcharts option={option} className="react_for_echarts" />
 
 
 
@@ -110,6 +151,7 @@ const Home: React.FC<any> = observer((props) => {
   const cardList = (
     <Row wrap>
       {repos.map((item: object) => {
+
         const cardTitle = (
           <div>
             <Html5TwoTone />
@@ -130,7 +172,7 @@ const Home: React.FC<any> = observer((props) => {
           <Card title={cardTitle} extra={cardExtra} style={{ width: 400, height: 640 }}>
             <Row className="flex h-bottom">
               <Col span={8}>
-                <div className="fs-40 color-warning b">1000</div>
+                <div className="fs-40 color-warning b">{item.activeCount}</div>
                 <div className="fs-12 color-info">位活跃用户</div>
               </Col>
               <Col span={1}>
@@ -138,23 +180,23 @@ const Home: React.FC<any> = observer((props) => {
               </Col>
 
               <Col span={5}>
-                <div className="fs-26 b">785</div>
+                <div className="fs-26 b">{item.allCount}</div>
                 <div className="fs-12 color-info">用户总数</div>
               </Col>
               <Col span={5}>
-                <div className="fs-26 b">237</div>
+                <div className="fs-26 b">{item.oldCount}</div>
                 <div className="fs-12 color-info">老用户数</div>
               </Col>
               <Col span={5}>
-                <div className="fs-26 b">548</div>
+                <div className="fs-26 b">{item.newCount}</div>
                 <div className="fs-12 color-info">新用户数</div>
               </Col>
             </Row>
             <div className="fs-16 mt-4">活跃趋势</div>
             <ReactEcharts
-              option={option}
+              option={item.option}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
             <div className="fs-16">健康总分</div>
             <div className="flex mt-4">

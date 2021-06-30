@@ -26,7 +26,6 @@ const codeMessage = {
 const errorHandler = (error: { response: Response }): Response => {
 
   const { response } = error;
-  console.log(response)
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
@@ -80,9 +79,9 @@ request.interceptors.request.use(async (url, options) => {  // 此处为拦截�
   //   // router.push('/user/login');
   // }
 
-  console.log(url)
+  // url = 'http://112.124.36.170:8009'+url;
 
-  url = 'http://112.124.36.170:8009'+url;
+  url = 'http://172.18.20.180:8009' + url;
     // console.log(url)
     return {
       url,
