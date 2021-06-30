@@ -60,17 +60,15 @@ const Home: React.FC<any> = observer((props) => {
   const counterStore = useStores('counterStore')
   const commonStore = useStores('commonStore')
   const [repos, setRepos] = React.useState([])
-  const [alives, setAlive] = React.useState([])
+  // const [alives, setAlive] = React.useState([])
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(async () => {
     const hide = message.loading('Loading');
     setLoading(true)
     const result = await queryRule();
-    const aliveValue = await queryAlive({webMonitorId: result.data.rows[1].webMonitorId});
+    // const aliveValue = await queryAlive({webMonitorId: result.data.rows[1].webMonitorId});
     setRepos(result.data.rows)
-    setAlive(aliveValue.data.rows)
-    console.log(aliveValue)
     setLoading(false)
     message.success('Loading successfully');
     hide();
