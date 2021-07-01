@@ -4,8 +4,6 @@ import { observer } from 'mobx-react'
 import { BrowserRouter, Link } from 'react-router-dom'
 import { createHashHistory } from 'history';
 
-import { useHistory } from 'react-router-dom'
-
 import { DownOutlined, BookOutlined, UserOutlined, HomeOutlined } from '@ant-design/icons'
 
 const { SubMenu } = Menu

@@ -81,9 +81,9 @@ request.interceptors.request.use(async (url, options) => {  // 此处为拦截�
 
   // url = 'http://112.124.36.170:8009'+url;
 
-  // url = 'http://172.18.20.180:8009' + url;
+  url = 'http://172.18.20.180:8009' + url;
 
-  url = 'http://192.168.1.106:8009' + url;
+  // url = 'http://192.168.1.106:8009' + url;
     // console.log(url)
     return {
       url,

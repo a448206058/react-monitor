@@ -2,6 +2,7 @@ import { useStores } from '@/hooks'
 import { observer } from 'mobx-react'
 import React, { useState } from 'react'
 import { Card, Row, Col, Select, Menu, Progress, Divider } from 'antd'
+import { queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
 
 import ReactEcharts from 'echarts-for-react'
 
@@ -305,11 +306,31 @@ const optionSystem = {
   ]
 }
 
-const Overview: React.FC = observer((props) => {
+// const Home: React.FC<any> = observer((props) => {
+const Overview: React.FC<any> = observer((props) => {
+  let webMonitorId = props.location.search.split("?")[1];
+
+  console.log(webMonitorId)
+
+  let newValue = queryNew({ id: webMonitorId });
+  const oldValue = queryOld({ id: webMonitorId });
+  const activeValue = queryAlive({ id: webMonitorId });
+  const loadCount = queryLoad({ id: webMonitorId });
   const [data, setData] = useState(['1'])
+  const [repos, setRepos] = React.useState({})
   const changeMode = (value: any) => {
     setData([value.key])
   }
+
+  setTimeout(() => {
+    const result = {};
+    result.newValue = newValue.data;
+    result.oldValue = oldValue.data;
+    result.activeValue = activeValue.data;
+    result.loadCount = loadCount.data;
+    console.log(result)
+    setRepos(result)
+  }, 3000)
 
   const mainList = (
     <div>
@@ -376,7 +397,7 @@ const Overview: React.FC = observer((props) => {
         <ReactEcharts
           option={option}
           style={{ height: '300px', width: '100%' }}
-          className={'react_for_echarts'}
+          className="react_for_echarts"
         />
       </Card>
       <Row className="mt-4">
@@ -396,7 +417,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -416,7 +437,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -436,7 +457,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -456,7 +477,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -476,7 +497,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionBase}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -496,7 +517,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionBasic}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -520,7 +541,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionSize}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -541,7 +562,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionCity}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -562,7 +583,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionSystem}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -588,7 +609,7 @@ const Overview: React.FC = observer((props) => {
             </div>
           </Col>
           <Col span={1}>
-            <Divider type={'vertical'} style={{ height: 150 }} />
+            <Divider type="vertical" style={{ height: 150 }} />
           </Col>
           <Col span={12}>
             <div className="flex v-center">
@@ -660,7 +681,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -680,7 +701,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -700,7 +721,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -720,7 +741,7 @@ const Overview: React.FC = observer((props) => {
             <ReactEcharts
               option={optionVisit}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
@@ -770,7 +791,7 @@ const Overview: React.FC = observer((props) => {
         <ReactEcharts
           option={areaOption}
           // style={{ height: '300px', width: '100%' }}
-          className={'react_for_echarts'}
+          className="react_for_echarts"
         />
       </Card>
     </div>
