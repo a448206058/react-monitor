@@ -1,9 +1,22 @@
 import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
-export async function queryRule(params?: TableListParams) {
-  return request('/api/v1/project/list', {
-    params,
+export async function queryPvCount(params?: TableListParams) {
+  return request('/api/v1/customerPV', {
+    method: 'GET',
+    data: {
+      ...params
+    },
+  });
+}
+
+
+export async function queryBehavior(params?: TableListParams) {
+  return request('/api/v1/behaviorInfo', {
+    method: 'GET',
+    data: {
+      ...params
+    },
   });
 }
 
@@ -18,6 +31,15 @@ export async function queryCount(params?: TableListParams) {
 
 export async function queryAlive(params?: TableListParams) {
   return request('/api/v1/customerPVActive', {
+    method: 'POST',
+    data: {
+      ...params
+    },
+  });
+}
+
+export async function queryDay(params?: TableListParams) {
+  return request('/api/v1/customerPVCountDay', {
     method: 'POST',
     data: {
       ...params

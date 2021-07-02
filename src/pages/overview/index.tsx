@@ -2,7 +2,7 @@ import { useStores } from '@/hooks'
 import { observer } from 'mobx-react'
 import React, { useState } from 'react'
 import { Card, Row, Col, Select, Menu, Progress, Divider } from 'antd'
-import { queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
+import { queryPvCount, queryBehavior, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryDay, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
 
 import ReactEcharts from 'echarts-for-react'
 
@@ -16,20 +16,25 @@ import {
   MailOutlined
 } from '@ant-design/icons'
 
+// console.log(test())
+// console.log(test1())
+
+const colors = ['#5470C6', '#EE6666']
+
 const option = {
   title: {
     text: '用户量统计'
   },
   xAxis: {
     type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    data: []
   },
   yAxis: {
     type: 'value'
   },
   series: [
     {
-      data: [120, 200, 150, 80, 70, 110, 130],
+      data: [],
       type: 'bar',
       showBackground: true,
       backgroundStyle: {
@@ -39,130 +44,127 @@ const option = {
   ]
 }
 
-// console.log(test())
-// console.log(test1())
-
-const colors = ['#5470C6', '#EE6666']
-
 const optionVisit = {
-  color: colors,
-
-  tooltip: {
-    trigger: 'none',
-    axisPointer: {
-      type: 'cross'
-    }
-  },
-  legend: {
-    data: ['2015 降水量', '2016 降水量']
-  },
-  grid: {
-    top: 70,
-    bottom: 50
-  },
-  xAxis: [
-    {
+  xAxis: {
       type: 'category',
-      axisTick: {
-        alignWithLabel: true
-      },
-      axisLine: {
-        onZero: false,
-        lineStyle: {
-          color: colors[1]
-        }
-      },
-      axisPointer: {
-        label: {
-          formatter: function (params) {
-            return (
-              '降水量  ' +
-              params.value +
-              (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-            )
-          }
-        }
-      },
-      data: [
-        '2016-1',
-        '2016-2',
-        '2016-3',
-        '2016-4',
-        '2016-5',
-        '2016-6',
-        '2016-7',
-        '2016-8',
-        '2016-9',
-        '2016-10',
-        '2016-11',
-        '2016-12'
-      ]
-    },
-    {
-      type: 'category',
-      axisTick: {
-        alignWithLabel: true
-      },
-      axisLine: {
-        onZero: false,
-        lineStyle: {
-          color: colors[0]
-        }
-      },
-      axisPointer: {
-        label: {
-          formatter: function (params) {
-            return (
-              '降水量  ' +
-              params.value +
-              (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-            )
-          }
-        }
-      },
-      data: [
-        '2015-1',
-        '2015-2',
-        '2015-3',
-        '2015-4',
-        '2015-5',
-        '2015-6',
-        '2015-7',
-        '2015-8',
-        '2015-9',
-        '2015-10',
-        '2015-11',
-        '2015-12'
-      ]
-    }
-  ],
-  yAxis: [
-    {
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
       type: 'value'
-    }
-  ],
-  series: [
-    {
-      name: '2015访问量',
-      type: 'line',
-      xAxisIndex: 1,
-      smooth: true,
-      emphasis: {
-        focus: 'series'
-      },
-      data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
-    },
-    {
-      name: '2016访问量',
-      type: 'line',
-      smooth: true,
-      emphasis: {
-        focus: 'series'
-      },
-      data: [3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7]
-    }
-  ]
-}
+  },
+  series: [{
+      data: [150, 230, 224, 218, 135, 147, 260],
+      type: 'line'
+  }]
+};
+
+// const optionVisit = {
+//   color: colors,
+
+//   tooltip: {
+//     trigger: 'none',
+//     axisPointer: {
+//       type: 'cross'
+//     }
+//   },
+//   legend: {
+//     data: ['访问量']
+//   },
+//   grid: {
+//     top: 70,
+//     bottom: 50
+//   },
+//   xAxis: [{
+//     type: 'category',
+//     axisTick: {
+//       alignWithLabel: true
+//     },
+//     axisLine: {
+//       onZero: false,
+//       lineStyle: {
+//         color: colors[1]
+//       }
+//     },
+//     axisPointer: {
+//       label: {
+//         formatter: function (params) {
+//           return (
+//             '访问量  ' +
+//             params.value +
+//             (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+//           )
+//         }
+//       }
+//     },
+//     data: [
+//       '2016-1',
+//       '2016-2',
+//       '2016-3',
+//       '2016-4',
+//       '2016-5',
+//       '2016-6',
+//       '2016-7',
+//       '2016-8',
+//       '2016-9',
+//       '2016-10',
+//       '2016-11',
+//       '2016-12'
+//     ]
+//   }, {
+//     type: 'category',
+//     axisTick: {
+//       alignWithLabel: true
+//     },
+//     axisLine: {
+//       onZero: false,
+//       lineStyle: {
+//         color: colors[1]
+//       }
+//     },
+//     axisPointer: {
+//       label: {
+//         formatter: function (params) {
+//           return (
+//             '访问量  ' +
+//             params.value +
+//             (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+//           )
+//         }
+//       }
+//     },
+//     data: [
+//       '2016-1',
+//       '2016-2',
+//       '2016-3',
+//       '2016-4',
+//       '2016-5',
+//       '2016-6',
+//       '2016-7',
+//       '2016-8',
+//       '2016-9',
+//       '2016-10',
+//       '2016-11',
+//       '2016-12'
+//     ]
+//   }],
+//   yAxis: [
+//     {
+//       type: 'value'
+//     }
+//   ],
+//   series: [
+//     {
+//       name: '访问量',
+//       type: 'line',
+//       xAxisIndex: 1,
+//       smooth: true,
+//       emphasis: {
+//         focus: 'series'
+//       },
+//       data: []
+//     }
+//   ]
+// }
 
 const optionBase = {
   xAxis: {
@@ -310,27 +312,95 @@ const optionSystem = {
 const Overview: React.FC<any> = observer((props) => {
   let webMonitorId = props.location.search.split("?")[1];
 
-  console.log(webMonitorId)
-
-  let newValue = queryNew({ id: webMonitorId });
-  const oldValue = queryOld({ id: webMonitorId });
-  const activeValue = queryAlive({ id: webMonitorId });
-  const loadCount = queryLoad({ id: webMonitorId });
   const [data, setData] = useState(['1'])
   const [repos, setRepos] = React.useState({})
   const changeMode = (value: any) => {
     setData([value.key])
   }
+  React.useEffect(async () => {
+    let pvCount = await queryPvCount({ id: webMonitorId })
+    let behavior = await queryBehavior({ id: webMonitorId })
+    let memberCount = await queryCount({ id: webMonitorId })
+    let newValue = (await queryNew({ id: webMonitorId })).data;
+    const oldValue = (await queryOld({ id: webMonitorId })).data;
+    const activeValue = await queryAlive({ id: webMonitorId });
+    const loadCount = await queryLoad({ id: webMonitorId });
+    const pvDay = await queryDay({ id: webMonitorId });
 
-  setTimeout(() => {
+    console.log(pvDay)
+
+    let oldValueSet = new Set();
+    oldValue.map((item: Object) => {
+      oldValueSet.add(item.customerKey);
+    })
+    newValue = newValue.filter(item => {
+      return !oldValueSet.has(item.customerKey)
+    })
+
+    // 访问量
+    // optionVisit
+    let pDays = [];
+    let pCount = [];
+    pvDay.data.map(item => {
+      pDays.push(item.days);
+      pCount.push(item.COUNT);
+    })
+
+    optionVisit.xAxis.data = pDays;
+    optionVisit.series[0].data = pCount;
+
+    console.log(optionVisit)
+
+    let ipCount = [];
+    let outMap = new Map();
+    let outValue = [];
+    pvCount.data.rows.map(item => {
+      if (outMap.has(item.customerKey) && outMap.get(item.customerKey) != item.simpleUrl) {
+        outValue.push(item.customerKey);
+      }
+      outMap.set(item.customerKey, item.simpleUrl)
+      ipCount.push(item.monitorIp)
+    })
+    outValue = Array.from(new Set(outValue));
+    ipCount = Array.from(new Set(ipCount))
+
+    let days = []
+    let counts = [];
+
+    // // 用户量
+    activeValue.data.map(item => {
+      days.push(item.days)
+      counts.push(item.COUNT);
+    })
+
+    option.xAxis.data = days;
+    option.series[0].data = counts;
+
+    let activeOption = JSON.parse(JSON.stringify(optionVisit));
+
+    activeOption.xAxis.data = days;
+    activeOption.series[0].data = counts;
+
     const result = {};
-    result.newValue = newValue.data;
-    result.oldValue = oldValue.data;
+    result.pvCount = pvCount.data.count;
+    result.memberCount = memberCount.data[0].count;
+    result.newValue = newValue.length;
+    result.oldValue = oldValue.length;
     result.activeValue = activeValue.data;
     result.loadCount = loadCount.data;
+    result.ipCount = ipCount.length;
+    result.behaviorCount = behavior.data.count;
+    result.outCount = ((result.memberCount - outValue.length) / result.memberCount * 100).toFixed(2);
+
+    result.option = option;
+
+    result.optionVisit = optionVisit;
+
+    result.activeOption = activeOption;
+
     console.log(result)
     setRepos(result)
-  }, 3000)
+  }, [])
 
   const mainList = (
     <div>
@@ -339,7 +409,7 @@ const Overview: React.FC<any> = observer((props) => {
         <Row>
           <Col span={4}>
             <div className="text-center">浏览量(PV)</div>
-            <div className="fs-32 b text-center">20098</div>
+            <div className="fs-32 b text-center">{repos.pvCount}</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-success">5990.3%</span>
@@ -347,8 +417,8 @@ const Overview: React.FC<any> = observer((props) => {
             </div>
           </Col>
           <Col span={4}>
-            <div className="text-center">访客数(PV)</div>
-            <div className="fs-32 b text-center">12882</div>
+            <div className="text-center">访客数(UV)</div>
+            <div className="fs-32 b text-center">{repos.memberCount}</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-warning">5990.3%</span>
@@ -357,7 +427,7 @@ const Overview: React.FC<any> = observer((props) => {
           </Col>
           <Col span={4}>
             <div className="text-center">新访客</div>
-            <div className="fs-32 b text-center">9999</div>
+            <div className="fs-32 b text-center">{repos.newValue}</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-warning">5990.3%</span>
@@ -366,7 +436,7 @@ const Overview: React.FC<any> = observer((props) => {
           </Col>
           <Col span={4}>
             <div className="text-center">IP数</div>
-            <div className="fs-32 b text-center">9999</div>
+            <div className="fs-32 b text-center">{repos.ipCount}</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-warning">5990.3%</span>
@@ -375,7 +445,7 @@ const Overview: React.FC<any> = observer((props) => {
           </Col>
           <Col span={4}>
             <div className="text-center">频次(人均)</div>
-            <div className="fs-32 b text-center">9999</div>
+            <div className="fs-32 b text-center">{parseInt(repos.behaviorCount / repos.memberCount)}</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-warning">5990.3%</span>
@@ -384,7 +454,7 @@ const Overview: React.FC<any> = observer((props) => {
           </Col>
           <Col span={4}>
             <div className="text-center">跳出率</div>
-            <div className="fs-32 b text-center">9999</div>
+            <div className="fs-32 b text-center">{repos.outCount}%</div>
             <div className="fs-12 text-center">
               较昨日
               <span className="color-warning">5990.3%</span>
@@ -395,7 +465,7 @@ const Overview: React.FC<any> = observer((props) => {
       </Card>
       <Card>
         <ReactEcharts
-          option={option}
+          option={repos.option ? repos.option : {}}
           style={{ height: '300px', width: '100%' }}
           className="react_for_echarts"
         />
@@ -405,17 +475,13 @@ const Overview: React.FC<any> = observer((props) => {
           <Card>
             <div className="fs-16 b flex">
               <div className="flex-1">页面访问量趋势</div>
-              <div className="color-success ">
+              {/* <div className="color-success ">
                 0.27%
                 <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
+              </div> */}
             </div>
             <ReactEcharts
-              option={optionVisit}
+              option={repos.optionVisit ? repos.optionVisit : {}}
               style={{ height: '300px', width: '100%' }}
               className="react_for_echarts"
             />
@@ -425,17 +491,17 @@ const Overview: React.FC<any> = observer((props) => {
           <Card>
             <div className="fs-16 b flex">
               <div className="flex-1">用户活跃量趋势</div>
-              <div className="color-success ">
+              {/* <div className="color-success">
                 2.57%
                 <ArrowUpOutlined className="color-success" />
-              </div>
+              </div> */}
             </div>
-            <div className="fs-12 flex">
+            {/* <div className="fs-12 flex">
               <div className="color-info flex-1">2021-05-10</div>
               <div>较一周前</div>
-            </div>
+            </div> */}
             <ReactEcharts
-              option={optionVisit}
+              option={repos.activeOption ? repos.activeOption : {}}
               style={{ height: '300px', width: '100%' }}
               className="react_for_echarts"
             />
