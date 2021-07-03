@@ -201,7 +201,7 @@ const Home: React.FC<any> = observer((props) => {
             </Row>
             <div className="fs-16 mt-4">活跃趋势</div>
             <ReactEcharts
-              option={item.option}
+              option={item.option ? item.option : {}}
               style={{ height: '300px', width: '100%' }}
               className="react_for_echarts"
             />
