@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import styles from './index.module.less'
 import { Card, Divider, Row, Col, Progress, Menu, message } from 'antd'
 import type { TableListItem } from './data.d';
-import { queryRule, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, updateRule, addRule, removeRule } from './service';
+import { queryRule, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
 import axios from 'axios';
 import {
   Html5TwoTone,
@@ -94,7 +94,8 @@ const Home: React.FC<any> = observer((props) => {
       const oldValue = (await queryOld({ id: item.webMonitorId })).data;
       const activeValue = (await queryAlive({ id: item.webMonitorId })).data;
       const loadCount = (await queryLoad({ id: item.webMonitorId })).data.count;
-      const jsError = (await queryJsError({ id: item.webMonitorId })).data;
+      const jsError = (await queryJsError({ id: item.webMonitorId })).data.count;
+      const httpCount = (await queryHttp({ id: item.webMonitorId })).data.count;
       // const details = (await queryDetail({ id: item.webMonitorId })).data;
       item.allCount = value.data[0].count;
       item.oldCount = oldValue.length;
@@ -102,6 +103,15 @@ const Home: React.FC<any> = observer((props) => {
       item.activeValue = activeValue;
       item.loadCount = loadCount;
       item.jsError = jsError;
+      item.httpCount = httpCount;
+      item.selfCount = 0;
+
+      item.jsValue = (jsError / loadCount).toFixed(2) * 100;
+      item.selfValue = 0.00;
+      item.httpValue = (httpCount / loadCount).toFixed(2) * 100;
+      item.sourceValue = 0.00;
+
+      item.healthyValue = 100 - ((item.jsValue + item.selfValue + item.httpValue + item.sourceValue) / 4).toFixed(2);
 
       let oldValueSet = new Set();
       oldValue.map((item: Object) => {
@@ -137,12 +147,12 @@ const Home: React.FC<any> = observer((props) => {
       setLoading(false)
       message.success('Loading successfully');
       hide();
-    }, 300)
+    }, 1000)
 
 
   }, [])
 
-  const EchartsPie = () => <ReactEcharts option={option} className="react_for_echarts" />
+  // const EchartsPie = () => <ReactEcharts option={option} className="react_for_echarts" />
 
 
 
@@ -167,16 +177,18 @@ const Home: React.FC<any> = observer((props) => {
         )
 
         const cardExtra = (
-          <div className="flex">
-            <FundFilled className="color-warning" />
-            <span className="color-warning ml-1">查看大屏</span>
-            <AppstoreOutlined className="color-warning ml-2" />
-            <SettingOutlined className="ml-2" />
-          </div>
+          <Link to={"/overview?" + item.webMonitorId}>
+            <div className="flex">
+              <FundFilled className="color-warning" />
+              <span className="color-warning ml-1">查看大屏</span>
+              <AppstoreOutlined className="color-warning ml-2" />
+              <SettingOutlined className="ml-2" />
+            </div>
+          </Link>
         )
 
         const card = (
-          <Card title={cardTitle} extra={cardExtra} style={{ width: 400, height: 640 }}>
+          <Card title={cardTitle} extra={cardExtra} style={{ width: 400, height: 640 }} >
             <Row className="flex h-bottom">
               <Col span={8}>
                 <div className="fs-40 color-warning b">{item.activeCount}</div>
@@ -214,22 +226,22 @@ const Home: React.FC<any> = observer((props) => {
                   '0%': '#108ee9',
                   '100%': '#87d068'
                 }}
-                percent={90}
+                percent={item.healthyValue}
               />
               <div className="ml-2">
                 <div className="fs-12 color-info">
-                  JS报错率：<span className="color-black fs-14">13.44</span>%
+                  JS报错率：<span className="color-black fs-14">{item.jsValue}</span>%
                 </div>
                 <div className="fs-12 color-info mt-2">
-                  接口报错率：<span className="color-black fs-14">0.04</span>%
+                  接口报错率：<span className="color-black fs-14">{item.httpValue}</span>%
                 </div>
               </div>
               <div className="ml-2">
                 <div className="fs-12 color-info">
-                  自定义异常率：<span className="color-black fs-14">13.44</span>%
+                  自定义异常率：<span className="color-black fs-14">{item.selfValue}</span>%
                 </div>
                 <div className="fs-12 color-info mt-2">
-                  静态资源报错率：<span className="color-black fs-14">0.04</span>%
+                  静态资源报错率：<span className="color-black fs-14">{item.sourceValue}</span>%
                 </div>
               </div>
             </div>
@@ -244,7 +256,7 @@ const Home: React.FC<any> = observer((props) => {
       <Col span={8} className="ml-4 mb-4">
         {addCard}
       </Col>
-    </Row>
+    </Row >
   )
 
   return (
