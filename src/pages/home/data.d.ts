@@ -1,30 +1,55 @@
-export type TableListItem = {
-  key: number;
-  disabled?: boolean;
-  href: string;
-  avatar: string;
-  name: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
-  updatedAt: Date;
-  createdAt: Date;
-  progress: number;
-};
+export interface TableListItem {
+  webMonitorId?: string;
+  allCount?: number;
+  oldCount?: number;
+  activeCount?: number;
+  activeValue?: [];
+  loadCount?: number;
+  jsError?: number;
+  httpCount?: number;
+  selfCount?: number;
+  jsValue?: number | string;
+  selfValue?: number;
+  httpValue?: number | string;
+  sourceValue?: number;
+  healthyValue?: any;
+  newCount?: number;
+  option?: object;
+}
 
-export type TableListPagination = {
+export interface PageParam {
+  id?: string;
+  projectName?: string;
+  webMonitorId?: string;
+  activeCount?: number;
+  allCount?: number;
+  oldCount?: number;
+  newCount?: number;
+  option?: object;
+  healthyValue?: any;
+  jsValue?: number | string;
+  httpValue?: string;
+  selfValue?: string;
+  sourceValue?: string;
+}
+
+export interface QueryParam {
+  webMonitorId?: string;
+}
+
+
+export interface TableListPagination {
   total: number;
   pageSize: number;
   current: number;
-};
+}
 
-export type TableListData = {
+export interface TableListData {
   list: TableListItem[];
   pagination: Partial<TableListPagination>;
-};
+}
 
-export type TableListParams = {
+export interface TableListParams {
   status?: string;
   name?: string;
   desc?: string;
@@ -33,4 +58,4 @@ export type TableListParams = {
   currentPage?: number;
   filter?: Record<string, any[]>;
   sorter?: Record<string, any>;
-};
+}

@@ -1,5 +1,6 @@
 import request from '@/utils/request';
-import type { TableListParams, TableListItem } from './data.d';
+import { Console } from 'node:console';
+import type { TableListParams, TableListItem, QueryParam } from './data.d';
 
 export async function queryRule(params?: TableListParams) {
   return request('/api/v1/project/list', {
@@ -7,7 +8,17 @@ export async function queryRule(params?: TableListParams) {
   });
 }
 
-export async function queryCount(params?: TableListParams) {
+export async function removeProject(params: { key: number[] }) {
+  console.log({...params})
+  return request('/api/v1/project/delete', {
+    method: 'POST',
+    data: {
+      ...params
+    },
+  });
+}
+
+export async function queryCount(params?: QueryParam) {
   return request('/api/v1/customerPVCount', {
     method: 'POST',
     data: {

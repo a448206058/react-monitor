@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './index.module.less'
 import { Card, Divider, Row, Col, Progress, Menu, message } from 'antd'
-import type { TableListItem } from './data.d';
-import { queryRule, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
+import type { TableListItem, QueryParam, PageParam } from './data.d';
+import { queryRule, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryJsError, queryHttp, removeProject, updateRule, addRule, removeRule } from './service';
 import axios from 'axios';
 import {
   Html5TwoTone,
@@ -80,76 +80,82 @@ const Home: React.FC<any> = observer((props) => {
   const [repos, setRepos] = React.useState([])
   const [loading, setLoading] = React.useState(true)
 
-  React.useEffect(async () => {
-    const hide = message.loading('Loading');
-    setLoading(true)
-    const result = await queryRule();
+  // let removeProjects = (e: any) => {
+  //   removeProject({id: e.id})
+  // }
 
-    result.data.rows.map(async (item: object) => {
-      if (!item.webMonitorId) {
-        item.webMonitorId = "-1";
-      }
-      const value = await queryCount({ id: item.webMonitorId });
-      let newValue = (await queryNew({ id: item.webMonitorId })).data;
-      const oldValue = (await queryOld({ id: item.webMonitorId })).data;
-      const activeValue = (await queryAlive({ id: item.webMonitorId })).data;
-      const loadCount = (await queryLoad({ id: item.webMonitorId })).data.count;
-      const jsError = (await queryJsError({ id: item.webMonitorId })).data.count;
-      const httpCount = (await queryHttp({ id: item.webMonitorId })).data.count;
-      // const details = (await queryDetail({ id: item.webMonitorId })).data;
-      item.allCount = value.data[0].count;
-      item.oldCount = oldValue.length;
-      item.activeCount = newValue.length;
-      item.activeValue = activeValue;
-      item.loadCount = loadCount;
-      item.jsError = jsError;
-      item.httpCount = httpCount;
-      item.selfCount = 0;
+  React.useEffect(() => {
+    async function anyNameFunction() {
+      const hide = message.loading('Loading');
+      setLoading(true)
+      const result = await queryRule();
 
-      item.jsValue = (jsError / loadCount).toFixed(2) * 100;
-      item.selfValue = 0.00;
-      item.httpValue = (httpCount / loadCount).toFixed(2) * 100;
-      item.sourceValue = 0.00;
+      result.data.rows.map(async (item: TableListItem) => {
+        if (!item.webMonitorId) {
+          item.webMonitorId = "-1";
+        }
+        let param: object = { id: item.webMonitorId };
+        const value = await queryCount(param);
+        let newValue = (await queryNew(param)).data;
+        const oldValue = (await queryOld(param)).data;
+        const activeValue = (await queryAlive(param)).data;
+        const loadCount = (await queryLoad(param)).data.count;
+        const jsError = (await queryJsError(param)).data.count;
+        const httpCount = (await queryHttp(param)).data.count;
+        // const details = (await queryDetail({ id: item.webMonitorId })).data;
+        item.allCount = value.data[0].count;
+        item.oldCount = oldValue.length;
+        item.activeCount = newValue.length;
+        item.activeValue = activeValue;
+        item.loadCount = loadCount;
+        item.jsError = jsError;
+        item.httpCount = httpCount;
+        item.selfCount = 0;
 
-      item.healthyValue = 100 - ((item.jsValue + item.selfValue + item.httpValue + item.sourceValue) / 4).toFixed(2);
+        item.jsValue = parseFloat((jsError / loadCount  * 100).toFixed(2));
+        item.selfValue = 0.00;
+        item.httpValue = parseFloat((httpCount / loadCount * 100).toFixed(2));
+        item.sourceValue = 0.00;
 
-      let oldValueSet = new Set();
-      oldValue.map((item: Object) => {
-        oldValueSet.add(item.customerKey);
+        item.healthyValue = 100 - parseFloat(((item.jsValue + item.selfValue + item.httpValue + item.sourceValue) / 4).toFixed(2));
+
+        let oldValueSet = new Set();
+        oldValue.map(item => {
+          oldValueSet.add(item.customerKey);
+        })
+        newValue = newValue.filter(item => {
+          return !oldValueSet.has(item.customerKey)
+        })
+        item.newCount = newValue.length;
+        item.option = {
+          xAxis: {
+            type: 'category',
+            data: []
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              data: [],
+              type: 'line',
+              smooth: false
+            }
+          ]
+        };
+        activeValue.map(items => {
+          item.option.xAxis.data.push(items.days)
+          item.option.series[0].data.push(items.COUNT);
+        })
       })
-      newValue = newValue.filter(item => {
-        return !oldValueSet.has(item.customerKey)
-      })
-      item.newCount = newValue.length;
-      item.option = {
-        xAxis: {
-          type: 'category',
-          data: []
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            data: [],
-            type: 'line',
-            smooth: false
-          }
-        ]
-      };
-      activeValue.map(items => {
-        item.option.xAxis.data.push(items.days)
-        item.option.series[0].data.push(items.COUNT);
-      })
-    })
-    setTimeout(() => {
-      setRepos(result.data.rows)
-      setLoading(false)
-      message.success('Loading successfully');
-      hide();
-    }, 1000)
-
-
+      setTimeout(() => {
+        setRepos(result.data.rows)
+        setLoading(false)
+        message.success('Loading successfully');
+        hide();
+      }, 1000)
+    }
+    anyNameFunction();
   }, [])
 
   // const EchartsPie = () => <ReactEcharts option={option} className="react_for_echarts" />
@@ -167,7 +173,7 @@ const Home: React.FC<any> = observer((props) => {
 
   const cardList = (
     <Row wrap>
-      {repos.map((item: object) => {
+      {repos.map((item: PageParam) => {
 
         const cardTitle = (
           <div>

@@ -1,8 +1,11 @@
 import { useStores } from '@/hooks'
 import { observer } from 'mobx-react'
 import React, { useState } from 'react'
-import { Card, Row, Col, Select, Menu, Progress, Divider } from 'antd'
-import { queryPvCount, queryBehavior, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryDay, queryJsError, queryHttp, updateRule, addRule, removeRule } from './service';
+import { Card, Row, Col, Select, Menu, Progress, Divider, Radio, Tooltip, List } from 'antd'
+import { queryPvCount, queryBehavior, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryDay, queryJsError, queryJsErrorSort, queryHttp, updateRule, addRule, removeRule } from './service';
+
+import type { PageParam, PageItem } from './data.d';
+import { HourglassOutlined, QuestionCircleFilled, RightOutlined, DiffFilled, UsergroupDeleteOutlined, AndroidFilled, AppleFilled, WindowsFilled } from '@ant-design/icons'
 
 import ReactEcharts from 'echarts-for-react'
 
@@ -15,9 +18,7 @@ import {
   ContainerOutlined,
   MailOutlined
 } from '@ant-design/icons'
-
-// console.log(test())
-// console.log(test1())
+import { load } from 'dotenv/types';
 
 const colors = ['#5470C6', '#EE6666']
 
@@ -44,7 +45,7 @@ const option = {
   ]
 }
 
-const optionVisit = {
+const optionVisit: any = {
   xAxis: {
     type: 'category',
     data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -57,114 +58,6 @@ const optionVisit = {
     type: 'line'
   }]
 };
-
-// const optionVisit = {
-//   color: colors,
-
-//   tooltip: {
-//     trigger: 'none',
-//     axisPointer: {
-//       type: 'cross'
-//     }
-//   },
-//   legend: {
-//     data: ['访问量']
-//   },
-//   grid: {
-//     top: 70,
-//     bottom: 50
-//   },
-//   xAxis: [{
-//     type: 'category',
-//     axisTick: {
-//       alignWithLabel: true
-//     },
-//     axisLine: {
-//       onZero: false,
-//       lineStyle: {
-//         color: colors[1]
-//       }
-//     },
-//     axisPointer: {
-//       label: {
-//         formatter: function (params) {
-//           return (
-//             '访问量  ' +
-//             params.value +
-//             (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-//           )
-//         }
-//       }
-//     },
-//     data: [
-//       '2016-1',
-//       '2016-2',
-//       '2016-3',
-//       '2016-4',
-//       '2016-5',
-//       '2016-6',
-//       '2016-7',
-//       '2016-8',
-//       '2016-9',
-//       '2016-10',
-//       '2016-11',
-//       '2016-12'
-//     ]
-//   }, {
-//     type: 'category',
-//     axisTick: {
-//       alignWithLabel: true
-//     },
-//     axisLine: {
-//       onZero: false,
-//       lineStyle: {
-//         color: colors[1]
-//       }
-//     },
-//     axisPointer: {
-//       label: {
-//         formatter: function (params) {
-//           return (
-//             '访问量  ' +
-//             params.value +
-//             (params.seriesData.length ? '：' + params.seriesData[0].data : '')
-//           )
-//         }
-//       }
-//     },
-//     data: [
-//       '2016-1',
-//       '2016-2',
-//       '2016-3',
-//       '2016-4',
-//       '2016-5',
-//       '2016-6',
-//       '2016-7',
-//       '2016-8',
-//       '2016-9',
-//       '2016-10',
-//       '2016-11',
-//       '2016-12'
-//     ]
-//   }],
-//   yAxis: [
-//     {
-//       type: 'value'
-//     }
-//   ],
-//   series: [
-//     {
-//       name: '访问量',
-//       type: 'line',
-//       xAxisIndex: 1,
-//       smooth: true,
-//       emphasis: {
-//         focus: 'series'
-//       },
-//       data: []
-//     }
-//   ]
-// }
 
 const optionBase = {
   xAxis: {
@@ -242,6 +135,8 @@ const optionSize = {
   ]
 }
 
+let isLoading = false;
+
 const optionCity = {
   tooltip: {
     trigger: 'axis',
@@ -308,98 +203,302 @@ const optionSystem = {
   ]
 }
 
+const optionLoading = {
+  dataset: {
+    source: [
+      ['score', 'amount', 'product'],
+      [89.3, 0, 'TCP连接'],
+      [57.1, 0, 'DNS解析'],
+      [74.4, 0, '发起请求'],
+      [50.1, 0, '请求响应'],
+      [89.7, 0, 'DOM解析'],
+      [68.1, 0, '页面加载']
+    ]
+  },
+  grid: { containLabel: true },
+  xAxis: { name: 'amount' },
+  yAxis: { type: 'category' },
+  visualMap: {
+    orient: 'horizontal',
+    left: 'center',
+    min: 10,
+    max: 100,
+    text: ['High Score', 'Low Score'],
+    // Map the score column to color
+    dimension: 0,
+    inRange: {
+      color: ['#65B581', '#FFCE34', '#FD665F']
+    }
+  },
+  series: [
+    {
+      type: 'bar',
+      encode: {
+        // Map the "amount" column to X axis.
+        x: 'amount',
+        // Map the "product" column to Y axis
+        y: 'product'
+      }
+    }
+  ]
+};
+
+const areaOption = {
+  title: {
+    // text: '某站点用户访问来源',
+    // subtext: '纯属虚构',
+    left: 'center'
+  },
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  series: [
+    {
+      // name: '访问来源',
+      type: 'pie',
+      radius: '50%',
+      data: [
+        { value: 0, name: '<1秒' },
+        { value: 0, name: '1-5秒' },
+        { value: 0, name: '5-10秒' },
+        { value: 0, name: '10-30秒' },
+        { value: 0, name: '>30秒' }
+      ],
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
+}
+
 // const Home: React.FC<any> = observer((props) => {
 const Overview: React.FC<any> = observer((props) => {
   let webMonitorId = props.location.search.split("?")[1];
 
+  // webMonitorId = 'webfunny_101'
+
   const [data, setData] = useState(['1'])
-  const [repos, setRepos] = React.useState({})
+  const [repos, setRepos]: [PageItem, any] = React.useState({})
+  const [loadValue, setLoad]: [any, any] = React.useState({})
+  const [render, setRender]: [any, any] = useState()
   const changeMode = (value: any) => {
     setData([value.key])
   }
-  React.useEffect(async () => {
-    let pvCount = await queryPvCount({ id: webMonitorId })
-    let behavior = await queryBehavior({ id: webMonitorId })
-    let memberCount = await queryCount({ id: webMonitorId })
-    let newValue = (await queryNew({ id: webMonitorId })).data;
-    const oldValue = (await queryOld({ id: webMonitorId })).data;
-    const activeValue = await queryAlive({ id: webMonitorId });
-    const loadCount = await queryLoad({ id: webMonitorId });
-    const pvDay = await queryDay({ id: webMonitorId });
+  let onChange = (e: any) => {
+    // this.setState({ size: e.target.value });
+  }
+  let setLoadValue = (e: any) => {
+    isLoading = false;
 
-    console.log(pvDay)
+    optionLoading.dataset.source[1][1] = parseFloat(e.connect);
+    optionLoading.dataset.source[2][1] = parseFloat(e.lookupDomain);
+    optionLoading.dataset.source[3][1] = parseFloat(e.request);
+    optionLoading.dataset.source[4][1] = parseFloat(e.request);
+    optionLoading.dataset.source[5][1] = parseFloat(e.domReady);
+    optionLoading.dataset.source[6][1] = parseFloat(e.loadPage);
 
-    let oldValueSet = new Set();
-    oldValue.map((item: Object) => {
-      oldValueSet.add(item.customerKey);
-    })
-    newValue = newValue.filter(item => {
-      return !oldValueSet.has(item.customerKey)
-    })
 
-    // 访问量
-    // optionVisit
-    let pDays = [];
-    let pCount = [];
-    pvDay.data.map(item => {
-      pDays.push(item.days);
-      pCount.push(item.COUNT);
-    })
+    isLoading = true;
 
-    optionVisit.xAxis.data = pDays;
-    optionVisit.series[0].data = pCount;
+    setLoad(e);
 
-    console.log(optionVisit)
+    if (render === 1) {
+      setRender(0);
+    } else {
+      setRender(1);
+    }
 
-    let ipCount = [];
-    let outMap = new Map();
-    let outValue = [];
-    pvCount.data.rows.map(item => {
-      if (outMap.has(item.customerKey) && outMap.get(item.customerKey) != item.simpleUrl) {
-        outValue.push(item.customerKey);
-      }
-      outMap.set(item.customerKey, item.simpleUrl)
-      ipCount.push(item.monitorIp)
-    })
-    outValue = Array.from(new Set(outValue));
-    ipCount = Array.from(new Set(ipCount))
+  }
+  React.useEffect(() => {
+    async function anyNameFunction() {
 
-    let days = []
-    let counts = [];
+      let param: object = { id: webMonitorId };
 
-    // // 用户量
-    activeValue.data.map(item => {
-      days.push(item.days)
-      counts.push(item.COUNT);
-    })
+      let pvCount = await queryPvCount(param)
+      let behavior = await queryBehavior(param)
+      let memberCount = await queryCount(param)
+      let newValue = (await queryNew(param)).data;
+      const oldValue = (await queryOld(param)).data;
+      const activeValue = await queryAlive(param);
+      const loadCount = await queryLoad(param);
+      const pvDay = await queryDay(param);
 
-    option.xAxis.data = days;
-    option.series[0].data = counts;
+      const errorMsg = (await queryJsError(param)).data;
+      const jsError: any = errorMsg.count;
+      const jsErrorValue: [] = errorMsg.rows;
 
-    let activeOption = JSON.parse(JSON.stringify(optionVisit));
 
-    activeOption.xAxis.data = days;
-    activeOption.series[0].data = counts;
+      const httpCount = (await queryHttp(param)).data.count;
 
-    const result = {};
-    result.pvCount = pvCount.data.count;
-    result.memberCount = memberCount.data[0].count;
-    result.newValue = newValue.length;
-    result.oldValue = oldValue.length;
-    result.activeValue = activeValue.data;
-    result.loadCount = loadCount.data;
-    result.ipCount = ipCount.length;
-    result.behaviorCount = behavior.data.count;
-    result.outCount = ((result.memberCount - outValue.length) / result.memberCount * 100).toFixed(2);
+      setRender(0)
 
-    result.option = option;
+      let oldValueSet = new Set();
+      oldValue.map((item: any) => {
+        oldValueSet.add(item.customerKey);
+      })
+      newValue = newValue.filter((item: any) => {
+        return !oldValueSet.has(item.customerKey)
+      })
 
-    result.optionVisit = optionVisit;
+      // 访问量
+      // optionVisit
+      let pDays: [] = [];
+      let pCount: [] = [];
+      pvDay.data.map((item: object) => {
+        pDays.push(item.days);
+        pCount.push(item.COUNT);
+      })
 
-    result.activeOption = activeOption;
+      optionVisit.xAxis.data = pDays;
+      optionVisit.series[0].data = pCount;
 
-    console.log(result)
-    setRepos(result)
+      let ipCount: any = [];
+      let outMap = new Map();
+      let outValue: any = [];
+      pvCount.data.rows.map((item: any) => {
+        if (outMap.has(item.customerKey) && outMap.get(item.customerKey) != item.simpleUrl) {
+          outValue.push(item.customerKey);
+        }
+        outMap.set(item.customerKey, item.simpleUrl)
+        ipCount.push(item.monitorIp)
+      })
+      outValue = Array.from(new Set(outValue));
+      ipCount = Array.from(new Set(ipCount))
+
+      let days: [] = []
+      let counts: [] = [];
+
+      // // 用户量
+      activeValue.data.map((item: any) => {
+        days.push(item.days)
+        counts.push(item.COUNT);
+      })
+
+      option.xAxis.data = days;
+      option.series[0].data = counts;
+
+      let activeOption = JSON.parse(JSON.stringify(optionVisit));
+
+      activeOption.xAxis.data = days;
+      activeOption.series[0].data = counts;
+
+      const result: PageParam = { option: {} };
+      result.pvCount = pvCount.data.count;
+      result.memberCount = memberCount.data[0].count;
+      result.newValue = newValue.length;
+      result.oldValue = oldValue.length;
+      result.activeValue = activeValue.data;
+      result.loadCount = loadCount.data;
+      result.ipCount = ipCount.length;
+      result.behaviorCount = behavior.data.count;
+      result.outCount = ((result.memberCount - outValue.length) / result.memberCount * 100).toFixed(2);
+
+      result.jsValue = parseFloat((jsError / loadCount.data.count  * 100).toFixed(2));
+      result.selfValue = 0.00;
+      result.httpValue = parseFloat((httpCount / loadCount.data.count  * 100).toFixed(2));
+      result.sourceValue = 0.00;
+
+      // debugger
+      result.healthyValue = 100 - parseFloat(((result.jsValue + result.selfValue + result.httpValue + result.sourceValue) / 4).toFixed(2));
+
+      result.option = option;
+
+      result.optionVisit = optionVisit;
+
+      result.activeOption = activeOption;
+
+      result.jsErrorValue = jsErrorValue;
+
+      let ttfb = 0;
+      let domReady = 0;
+      let loadPage = 0;
+
+      // 加载耗时 < 1秒
+      let load1 = [];
+      // 1-5 秒
+      let load2 = [];
+      // 5-10 秒
+      let load3 = [];
+      // 10-30 秒
+      let load4 = [];
+      // >30 秒
+      let load5 = [];
+
+      let loadMap = new Map();
+
+      let loadArr: [] = [];
+      loadCount.data.rows.map(item => {
+        ttfb += parseInt(item.ttfb);
+        domReady += parseInt(item.domReady);
+        loadPage += parseInt(item.loadPage);
+
+        if (item.loadPage < 1000) {
+          load1.push(item)
+        } else if (item.loadPage < 5000) {
+          load2.push(item)
+        } else if (item.loadPage < 10000) {
+          load3.push(item)
+        } else if (item.loadPage < 30000) {
+          load4.push(item)
+        } else if (item.loadPage >= 30000) {
+          load5.push(item)
+        }
+        if (item.completeUrl) {
+          if (!loadMap.has(item.completeUrl)) {
+            loadMap.set(item.completeUrl, loadArr.length);
+            loadArr.push(
+              {
+                name: item.completeUrl,
+                num: 1,
+                loadPage: item.loadPage,
+                domReady: item.domReady,
+                request: item.request,
+                lookupDomain: item.lookupDomain,
+                connect: item.connect,
+              })
+          } else {
+            loadMap.set(item.completeUrl, loadMap.get(item.completeUrl))
+            loadArr[loadMap.get(item.completeUrl)].num++;
+            loadArr[loadMap.get(item.completeUrl)].loadPage += item.loadPage;
+            loadArr[loadMap.get(item.completeUrl)].domReady += item.domReady;
+            loadArr[loadMap.get(item.completeUrl)].request += item.request;
+            loadArr[loadMap.get(item.completeUrl)].lookupDomain += item.lookupDomain;
+            loadArr[loadMap.get(item.completeUrl)].connect += item.connect;
+          }
+        }
+      })
+
+      loadArr.map(item => {
+        item.loadPage = (item.loadPage / item.num).toFixed(2);
+        item.domReady = (item.domReady / item.num).toFixed(2);
+        item.request = (item.request / item.num).toFixed(2);
+        item.lookupDomain = (item.lookupDomain / item.num).toFixed(2);
+        item.connect = (item.connect / item.num).toFixed(2);
+      })
+      // areaOption.series[0].data = [];
+      areaOption.series[0].data[0].value = load1.length;
+      areaOption.series[0].data[1].value = load2.length;
+      areaOption.series[0].data[2].value = load3.length;
+      areaOption.series[0].data[3].value = load4.length;
+      areaOption.series[0].data[4].value = load5.length;
+
+      result.ttfb = (ttfb / loadCount.data.count).toFixed(2);
+      result.domReady = (domReady / loadCount.data.count / 1000).toFixed(2);
+      result.loadPage = (loadPage / loadCount.data.count / 1000).toFixed(2);
+
+      result.loadArr = loadArr;
+
+      setRepos(result)
+    }
+    anyNameFunction();
   }, [])
 
   const mainList = (
@@ -410,56 +509,26 @@ const Overview: React.FC<any> = observer((props) => {
           <Col span={4}>
             <div className="text-center">浏览量(PV)</div>
             <div className="fs-32 b text-center">{repos.pvCount}</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-success">5990.3%</span>
-              <ArrowUpOutlined className="color-success" />
-            </div>
           </Col>
           <Col span={4}>
             <div className="text-center">访客数(UV)</div>
             <div className="fs-32 b text-center">{repos.memberCount}</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-warning">5990.3%</span>
-              <ArrowDownOutlined className="color-warning" />
-            </div>
           </Col>
           <Col span={4}>
             <div className="text-center">新访客</div>
             <div className="fs-32 b text-center">{repos.newValue}</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-warning">5990.3%</span>
-              <ArrowDownOutlined className="color-warning" />
-            </div>
           </Col>
           <Col span={4}>
             <div className="text-center">IP数</div>
             <div className="fs-32 b text-center">{repos.ipCount}</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-warning">5990.3%</span>
-              <ArrowDownOutlined className="color-warning" />
-            </div>
           </Col>
           <Col span={4}>
             <div className="text-center">频次(人均)</div>
-            <div className="fs-32 b text-center">{parseInt(repos.behaviorCount / repos.memberCount)}</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-warning">5990.3%</span>
-              <ArrowDownOutlined className="color-warning" />
-            </div>
+            <div className="fs-32 b text-center">{parseInt(repos.behaviorCount) / parseInt(repos.memberCount)}</div>
           </Col>
           <Col span={4}>
             <div className="text-center">跳出率</div>
             <div className="fs-32 b text-center">{repos.outCount}%</div>
-            <div className="fs-12 text-center">
-              较昨日
-              <span className="color-warning">5990.3%</span>
-              <ArrowDownOutlined className="color-warning" />
-            </div>
           </Col>
         </Row>
       </Card>
@@ -475,10 +544,6 @@ const Overview: React.FC<any> = observer((props) => {
           <Card>
             <div className="fs-16 b flex">
               <div className="flex-1">页面访问量趋势</div>
-              {/* <div className="color-success ">
-                0.27%
-                <ArrowUpOutlined className="color-success" />
-              </div> */}
             </div>
             <ReactEcharts
               option={repos.optionVisit ? repos.optionVisit : {}}
@@ -491,163 +556,9 @@ const Overview: React.FC<any> = observer((props) => {
           <Card>
             <div className="fs-16 b flex">
               <div className="flex-1">用户活跃量趋势</div>
-              {/* <div className="color-success">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div> */}
             </div>
-            {/* <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div> */}
             <ReactEcharts
               option={repos.activeOption ? repos.activeOption : {}}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">新用户活跃量趋势</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">跳出率趋势</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">跳出率趋势</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionBase}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">新用户次日留存率</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionBasic}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <div className="fs-18 b mb-4 mt-4">综合数据</div>
-      <Row>
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">设备型号用户量Top 10</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionSize}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">城市名称访问用户量Top 10</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionCity}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-
-        <Col span="7" className="ml-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">系统版本用户量Top 10</div>
-              <div className="color-success ">
-                2.57%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionSystem}
               style={{ height: '300px', width: '100%' }}
               className="react_for_echarts"
             />
@@ -656,6 +567,8 @@ const Overview: React.FC<any> = observer((props) => {
       </Row>
     </div>
   )
+
+  // const list = [{ type: 'List', name: 'Script error', android: 58, iphone: 12, man: 55, time: '2020-02-01' }, { type: 'TypeError', name: 'Script error', android: 58, iphone: 12, man: 55, time: '2020-02-01' }]
 
   const healthList = (
     <div>
@@ -670,7 +583,7 @@ const Overview: React.FC<any> = observer((props) => {
                 type="circle"
                 width={120}
                 format={(percent) => percent + '分'}
-                percent={90}
+                percent={repos.healthyValue}
               />
             </div>
           </Col>
@@ -684,8 +597,8 @@ const Overview: React.FC<any> = observer((props) => {
                   type="circle"
                   width={80}
                   status="exception"
-                  format={(percent) => percent + '分'}
-                  percent={90}
+                  format={(percent: any) => (100 - percent) + '分'}
+                  percent={repos.jsValue}
                 />
                 <div className="text-center mt-2">JS错误</div>
               </div>
@@ -694,8 +607,8 @@ const Overview: React.FC<any> = observer((props) => {
                   type="circle"
                   width={80}
                   status="success"
-                  format={(percent) => percent + '分'}
-                  percent={90}
+                  format={(percent: any) => (100 - percent) + '分'}
+                  percent={repos.selfValue}
                 />
 
                 <div className="text-center mt-2">自定义异常</div>
@@ -705,8 +618,8 @@ const Overview: React.FC<any> = observer((props) => {
                   type="circle"
                   width={80}
                   status="normal"
-                  format={(percent) => percent + '分'}
-                  percent={90}
+                  format={(percent: any) => (100 - percent) + '分'}
+                  percent={repos.sourceValue}
                 />
 
                 <div className="text-center mt-2">静态资源异常</div>
@@ -720,8 +633,8 @@ const Overview: React.FC<any> = observer((props) => {
                     '0%': 'rgb(255, 151, 36)',
                     '100%': 'rgb(255, 151, 36)'
                   }}
-                  format={(percent) => percent + '分'}
-                  percent={90}
+                  format={(percent: any) => (100 - percent) + '分'}
+                  percent={repos.sourceValue}
                 />
                 <div className="text-center mt-2">接口异常</div>
               </div>
@@ -730,146 +643,96 @@ const Overview: React.FC<any> = observer((props) => {
         </Row>
       </Card>
 
-      <Row>
-        <Col span="7" className="mt-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">js报错趋势</div>
-              <div className="color-success ">
-                0.27%
-                <ArrowUpOutlined className="color-success" />
-              </div>
+      <List
+        size="large"
+        dataSource={repos.jsErrorValue}
+        className="bg-white"
+        renderItem={(item: any) =>
+          <List.Item>
+            <div className="fs-12 flex wd_100s">
+              <span className="error_circle" />
+              <span className="fs-16 color-primary ml-4">{item.uploadType}</span>
+              <span className="ml-4">{item.name}</span>
+              发生平台：{item.os === "android" && <AndroidFilled className="ml-1 mr-3" />}
+              {item.os === "ios" && <AppleFilled className="ml-1 mr-3" />}
+              {item.os === "web" && <WindowsFilled className="ml-1 mr-3" />}
+              页面：{item.simpleUrl}
+              <div className="flex-right color-info">最近：{item.updatedAt}</div>
+              <RightOutlined className="ml4" />
             </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4 mt-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">自定义异常趋势</div>
-              <div className="color-success ">
-                0.27%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="ml-4 mt-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">静态资源加载报错</div>
-              <div className="color-success ">
-                0.27%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-        <Col span="7" className="mt-4">
-          <Card>
-            <div className="fs-16 b flex">
-              <div className="flex-1">接口请求报错</div>
-              <div className="color-success ">
-                0.27%
-                <ArrowUpOutlined className="color-success" />
-              </div>
-            </div>
-            <div className="fs-12 flex">
-              <div className="color-info flex-1">2021-05-10</div>
-              <div>较一周前</div>
-            </div>
-            <ReactEcharts
-              option={optionVisit}
-              style={{ height: '300px', width: '100%' }}
-              className="react_for_echarts"
-            />
-          </Card>
-        </Col>
-      </Row>
+
+          </List.Item>}
+      />
     </div>
   )
 
-  const areaOption = {
-    title: {
-      text: '某站点用户访问来源',
-      subtext: '纯属虚构',
-      left: 'center'
-    },
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
-    series: [
-      {
-        name: '访问来源',
-        type: 'pie',
-        radius: '50%',
-        data: [
-          { value: 1048, name: '湖南' },
-          { value: 735, name: '上海' },
-          { value: 580, name: '广东' },
-          { value: 484, name: '北京' },
-          { value: 300, name: '其他' }
-        ],
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
-  }
+  //   const listPage = ([...repos.loadArr.map(item => {
+  //     (<Radio.Group onChange={onChange} className="mb-2">
+  //    <Radio.Button value="<1秒" className="chose_list">
+  //      <Tooltip
+  //        placement="topLeft"
+  //        title="https://webfunny**com:8513/mcl/ltv/application/promote/query"
+  //        arrowPointAtCenter
+  //      >
+  //        <div className="flex">
+  //          https://webfunny**com:8513/mcl/ltv/application/promote/query
+  //          <DiffFilled />
+  //          （71）
+  //          <RightOutlined />
+  //        </div>
+
+  //      </Tooltip>
+  //    </Radio.Button>
+  //  </Radio.Group>)
+  //  })])
+
+  const listPage = (<div>{
+    repos.loadArr && repos.loadArr.map((item, index) => {
+      return <div className="mt-2" onClick={setLoadValue.bind(this, item)} key={item.name}><Radio.Button value="<1秒" className="chose_list">
+        <Tooltip
+          placement="topLeft"
+          title={item.name}
+          arrowPointAtCenter
+        >
+          <div className="flex">
+            {item.name}
+            <DiffFilled className="ml-2" />
+            （{item.num}）
+            <RightOutlined className="flex-right" />
+          </div>
+        </Tooltip>
+      </Radio.Button></div>
+    })
+  }</div>)
+
+  // const loadChart = (<div>{repos.loadPage && (<ReactEcharts
+  //   option={optionLoading}
+  //   style={{ height: '300px', width: '100%' }}
+  //   className="react_for_echarts"
+  // />)}</div>);
+
+  const loadChart = (<div>{render ? (<div><ReactEcharts option={optionLoading} style={{ height: '300px', width: '100%' }} className="react_for_echarts" />{optionLoading.dataset.source[6][1]}</div>) : ''}</div>);
+
   const perList = (
     <div>
       <div className="fs-18 b mb-4">页面性能</div>
-      <Row>
+      <Row className="mb-2">
         <Col span="5">
           <Card>
             <div>TTFB平均时间</div>
-            <div>158.91ms</div>
+            <div>{repos.ttfb}ms</div>
           </Card>
         </Col>
         <Col span="5" className="ml-4">
           <Card>
             <div>Dom解析时间</div>
-            <div>2.58s</div>
+            <div>{repos.domReady}s</div>
           </Card>
         </Col>
         <Col span="5" className="ml-4">
           <Card>
             <div>页面平均加载时间</div>
-            <div>2.74s</div>
+            <div>{repos.loadPage}s</div>
           </Card>
         </Col>
       </Row>
@@ -879,6 +742,43 @@ const Overview: React.FC<any> = observer((props) => {
           // style={{ height: '300px', width: '100%' }}
           className="react_for_echarts"
         />
+      </Card>
+      <div className="mt-2" />
+      <Card >
+        {listPage}
+        <Row className="mt-4">
+          <Col span={15} className="ml-4">
+            <div className="flex v-center fs-18 b mt-4">加载计时(ms)</div>
+            <Divider dashed />
+            {loadChart}
+          </Col>
+          <Col span={8}>
+            <Row>
+              <Col span={11}>
+                <Card className="bg-warning">
+                  <div className="flex">
+                    <div className="fs-18">
+                      <div>平均网络耗时</div>
+                      <div>{(loadValue.loadPage / 1000).toFixed(2)}s</div>
+                    </div>
+                    <HourglassOutlined className="fs-32" />
+                  </div>
+                </Card>
+              </Col>
+              <Col className="ml-4" span={11}>
+                <Card className="bg-error">
+                  <div className="flex">
+                    <div className="fs-18">
+                      <div>影响用户</div>
+                      <div>{loadValue.num}</div>
+                    </div>
+                    <UsergroupDeleteOutlined className="fs-32" />
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Card>
     </div>
   )
@@ -912,16 +812,12 @@ const Overview: React.FC<any> = observer((props) => {
           <Menu.Item key="3" icon={<SecurityScanOutlined />}>
             性能预览
           </Menu.Item>
-          <Menu.Item key="4" icon={<EnvironmentOutlined />}>
-            地域分布
-          </Menu.Item>
         </Menu>
       </Col>
       <Col span={17} className="ml-4">
-        {data[0] == '1' && mainList}
-        {data[0] == '2' && healthList}
-        {data[0] == '3' && perList}
-        {data[0] == '4' && cityList}
+        {data[0] === '1' && mainList}
+        {data[0] === '2' && healthList}
+        {data[0] === '3' && perList}
       </Col>
     </Row>
   )

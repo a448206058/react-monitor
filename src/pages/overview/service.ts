@@ -77,6 +77,13 @@ export async function queryJsError(params?: TableListParams) {
   });
 }
 
+export async function queryJsErrorSort(params?: TableListParams) {
+  return request('/api/v1/getJavascriptErrorSort', {
+    method: 'POST',
+    params,
+  });
+}
+
 export async function queryHttp(params?: TableListParams) {
   return request('/api/v1/getHttpLogInfoList', {
     params,

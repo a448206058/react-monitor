@@ -11,6 +11,12 @@ import { RightOutlined, AndroidFilled, AppleFilled, WindowsFilled, DiffFilled } 
 interface User {
   key: number;
   name: string;
+  id?: string;
+  page?: string;
+  from?: string;
+  ip?: string;
+  address?: string;
+  time?: string;
 }
 
 const columns: ColumnsType<User> = [
@@ -58,6 +64,7 @@ const columns: ColumnsType<User> = [
 
 const data: User[] = [
   {
+    name: '1',
     key: 0,
     id: 'userId',
     page: 'https://www.webfunny.cn/home.html',
@@ -74,7 +81,7 @@ const format = 'HH:mm';
 const Behaviors: React.FC = observer((props) => {
   const commonStore = useStores('commonStore')
 
-  const onChange = (date: string, dateString: string) => {
+  const onChange = (date: any, dateString: string) => {
     console.log(date, dateString);
   }
 

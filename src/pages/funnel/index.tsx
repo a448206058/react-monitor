@@ -91,7 +91,7 @@ const httpError: React.FC = observer((props) => {
 
   const titleContent = (
     <div>
-      <div>1.埋点demo1 -> 埋点demo2</div>
+      <div>1.埋点demo1 - 埋点demo2</div>
       <div className="fs-12 color-info">俩个步骤之间，每日UV转化率变化 ｜ 转化周期：1天</div>
     </div>
   )
@@ -111,7 +111,7 @@ const httpError: React.FC = observer((props) => {
           <ReactEcharts
             option={option}
             style={{ height: '300px', width: '100%' }}
-            className={'react_for_echarts'}
+            className="react_for_echarts"
           />
         </Card>
       </Col>
@@ -120,7 +120,7 @@ const httpError: React.FC = observer((props) => {
           <ReactEcharts
             option={option}
             style={{ height: '300px', width: '100%' }}
-            className={'react_for_echarts'}
+            className="react_for_echarts"
           />
         </Card>
       </Col>

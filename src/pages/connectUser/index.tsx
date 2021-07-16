@@ -9,8 +9,14 @@ import moment from 'moment';
 import { RightOutlined, AndroidFilled, AppleFilled, WindowsFilled, DiffFilled } from '@ant-design/icons'
 
 interface User {
-  key: number;
-  name: string;
+  key?: number;
+  name?: string;
+  id?: string;
+  page?: string;
+  from?: string;
+  ip?: string;
+  address?: string;
+  time?: string;
 }
 
 const columns: ColumnsType<User> = [
@@ -74,7 +80,7 @@ const format = 'HH:mm';
 const ConnectUser: React.FC = observer((props) => {
   const commonStore = useStores('commonStore')
 
-  const onChange = (date: string, dateString: string) => {
+  const onChange = (date?: any | null, dateString?: string) => {
     console.log(date, dateString);
   }
 

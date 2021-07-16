@@ -11,8 +11,14 @@ const { Panel } = Collapse;
 import { RightOutlined, AndroidFilled, AppleFilled, WindowsFilled, DiffFilled, PaperClipOutlined, StepBackwardOutlined, StepForwardOutlined, LineChartOutlined, CompassTwoTone, CloudOutlined, MobileOutlined } from '@ant-design/icons'
 
 interface User {
-  key: number;
-  name: string;
+  key?: number;
+  name?: string;
+  error?: string;
+  page?: string;
+  version?: string;
+  ip?: string;
+  web?: string;
+  time?: string;
 }
 
 const columns: ColumnsType<User> = [
@@ -63,6 +69,7 @@ const columns: ColumnsType<User> = [
 const data: User[] = [
   {
     key: 0,
+    name: '',
     error: 'http://47.105.132.73:8011/server/getSysInfo?webMonitorId=',
     page: 'http://47.105.132.73:8010/overview.html',
     version: '1621fdcc-65e8-49fe-b379-cb20a94ef329-1581763596534',
@@ -89,7 +96,7 @@ const javascriptErrorDetail: React.FC = observer((props) => {
       <Row>
         <Col span={18}>
           <div><span className="fs-22 b">UncaughtInPromiseError: r[t] is not a function</span><span className="ml-4">common.e6d84b9c.js:29:72045</span></div>
-          <div className="mt-2 flex"><div className="error_circle mr-1"></div><span className="fs-12">UncaughtInPromiseError: r[t] is not a function</span></div>
+          <div className="mt-2 flex"><div className="error_circle mr-1" /><span className="fs-12">UncaughtInPromiseError: r[t] is not a function</span></div>
           <div className="mt-2 color-info">2021-05-19 21:46:42</div>
           <div className="color-primary mt-2"><PaperClipOutlined className="mr-1 fs-16" />https://webfunny**com/webfunny/home</div>
 
@@ -185,7 +192,7 @@ const javascriptErrorDetail: React.FC = observer((props) => {
             <MobileOutlined className="fs-50 color-primary" />
             <div className="ml-1">
               <div>vivo X9</div>
-              <div className="mt-1"></div>
+              <div className="mt-1" />
             </div>
           </div>
         </Col>

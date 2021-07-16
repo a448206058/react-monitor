@@ -9,8 +9,12 @@ import moment from 'moment';
 import { RightOutlined, AndroidFilled, AppleFilled, WindowsFilled, DiffFilled, PaperClipOutlined } from '@ant-design/icons'
 
 interface User {
-  key: number;
+  key?: number;
   name: string;
+  inject?: string;
+  page?: string;
+  from?: string;
+  time?: string;
 }
 
 const columns: ColumnsType<User> = [
@@ -51,6 +55,7 @@ const columns: ColumnsType<User> = [
 const data: User[] = [
   {
     key: 0,
+    name: '',
     inject: 'http://47.105.132.73:8011/server/getSysInfo?webMonitorId=',
     page: 'http://47.105.132.73:8010/overview.html',
     from: '1621fdcc-65e8-49fe-b379-cb20a94ef329-1581763596534',

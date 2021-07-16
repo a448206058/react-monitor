@@ -13,6 +13,12 @@ import { RightOutlined, AndroidFilled, AppleFilled, WindowsFilled, DiffFilled, P
 interface User {
   key: number;
   name: string;
+  id?: string;
+  page?: string;
+  from?: string;
+  ip?: string;
+  address?: string;
+  time?: string;
 }
 
 const optionPage = {
@@ -128,6 +134,7 @@ const columns: ColumnsType<User> = [
 
 const data: User[] = [
   {
+    name: '1',
     key: 0,
     id: 'userId',
     page: 'https://www.webfunny.cn/home.html',
@@ -144,17 +151,17 @@ const format = 'HH:mm';
 const BehaviorsDetail: React.FC = observer((props) => {
   const commonStore = useStores('commonStore')
 
-  const onChange = (date: string, dateString: string) => {
+  const onChange = (date: any, dateString: string) => {
     console.log(date, dateString);
   }
 
   const heaveTitle = (
     <div className="flex">
       <div className="fs-18 b">行为记录列表</div>
-      <Button size={'small'} className="flex-right">全部</Button>
-      <Button size={'small'} className="ml-2">浏览</Button>
-      <Button size={'small'} className="ml-2">错误</Button>
-      <Button size={'small'} className="ml-2">接口</Button>
+      <Button size="small" className="flex-right">全部</Button>
+      <Button size="small" className="ml-2">浏览</Button>
+      <Button size="small" className="ml-2">错误</Button>
+      <Button size="small" className="ml-2">接口</Button>
     </div>
   )
 
@@ -171,7 +178,7 @@ const BehaviorsDetail: React.FC = observer((props) => {
       </Card>
       <Row gutter={16} className="mt-4">
         <Col span="8">
-          <Card title={'用户基本信息'}>
+          <Card title="用户基本信息">
             <div>
               <p>用户标签：</p>
               <p>系统版本：vivo Y67L</p>
@@ -181,21 +188,21 @@ const BehaviorsDetail: React.FC = observer((props) => {
           </Card>
         </Col>
         <Col span="8">
-          <Card title={'页面平均加载时间'}>
+          <Card title="页面平均加载时间">
 
             <ReactEcharts
               option={optionPage}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>
         <Col span="8">
-          <Card title={'接口耗时区间分布'}>
+          <Card title="接口耗时区间分布">
             <ReactEcharts
               option={optionInject}
               style={{ height: '300px', width: '100%' }}
-              className={'react_for_echarts'}
+              className="react_for_echarts"
             />
           </Card>
         </Col>

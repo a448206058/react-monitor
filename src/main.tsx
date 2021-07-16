@@ -12,7 +12,10 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider stores={stores}>
 
-      <BrowserRouter>  <Siber />{renderRoutes(routes)}</BrowserRouter>
+      <BrowserRouter>  
+        {/* <Siber /> */}
+        {renderRoutes(routes)}
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

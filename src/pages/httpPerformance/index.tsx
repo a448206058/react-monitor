@@ -123,7 +123,7 @@ const httpPerformance: React.FC = observer((props) => {
               <Radio.Button value="1-5秒" className="chose_box">1-5秒</Radio.Button>
               <Radio.Button value="5-10秒" className="chose_box">5-10秒</Radio.Button>
               <Radio.Button value="10-30秒" className="chose_box">10-30秒</Radio.Button>
-              <Radio.Button value=">30秒" className="chose_box">>30秒</Radio.Button>
+              <Radio.Button value=">30秒" className="chose_box">`&gt;`30秒</Radio.Button>
             </Radio.Group>
           </div>
           <div className="flex color-info mt-4 v-center">
@@ -137,15 +137,13 @@ const httpPerformance: React.FC = observer((props) => {
           <ReactEcharts
             option={option}
             style={{ height: '300px', width: '100%' }}
-            className={'react_for_echarts'}
+            className="react_for_echarts"
           />
         </Col>
       </Row>
 
       <Tabs defaultActiveKey="1">
-        <TabPane tab={tabTitle} key="1">
-
-        </TabPane>
+        <TabPane tab={tabTitle} key="1" />
       </Tabs>
       <Row>
         <Col span={8}>
@@ -153,7 +151,7 @@ const httpPerformance: React.FC = observer((props) => {
           <ReactEcharts
             option={optionTime}
             style={{ height: '300px', width: '100%' }}
-            className={'react_for_echarts'}
+            className="react_for_echarts"
           />
         </Col>
         <Col span={15} className="ml-4">
@@ -161,7 +159,7 @@ const httpPerformance: React.FC = observer((props) => {
           <ReactEcharts
             option={optionTime}
             style={{ height: '300px', width: '100%' }}
-            className={'react_for_echarts'}
+            className="react_for_echarts"
           />
         </Col>
       </Row>
@@ -205,8 +203,7 @@ const httpPerformance: React.FC = observer((props) => {
         </Col>
         <Col span={15} className="ml-4">
           <Row>
-            <Col span={4}>
-            </Col>
+            <Col span={4} />
             <Col span={8}>
               <Card className="bg-warning">
                 <div className="flex">

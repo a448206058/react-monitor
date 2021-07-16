@@ -30,7 +30,6 @@ const codeMessage = {
 const errorHandler = (error: { response: Response }): Response => {
 
   const { response } = error;
-  console.log(response)
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
@@ -72,7 +71,7 @@ request.interceptors.request.use(async (url, options) => {  // 此处为拦截�
       options: { ...options, headers },
     };
   } else {
-    if(url != '/api/User/Login'){
+    if(url !== '/api/User/Login'){
       window.location.href = "/user/login";
     }
     // url = 'http://workadminapi.xuqyfw.com'+url;
