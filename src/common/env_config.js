@@ -5,9 +5,9 @@ const envUrls = {
     uri: "http://112.124.36.170:8009"
   },
   dev: {
-    apiServerUrl: "http://112.124.36.170:8009",
-    nodeApiServerUrl: "http://112.124.36.170:8009",
-    uri: "http://112.124.36.170:8009"
+    apiServerUrl: "http://172.18.20.180:8009",
+    nodeApiServerUrl: "http://172.18.20.180:8009",
+    uri: "http://172.18.20.180:8009"
   },
   qa: {
     apiServerUrl: "http://112.124.36.170:8009",

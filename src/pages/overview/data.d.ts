@@ -21,7 +21,7 @@ export interface PageParam {
   activeValue?: object;
   loadCount?: number;
   ipCount?: number;
-  behaviorCount?: number | string;
+  behaviorCount?: any;
   outCount?: number | string;
   jsValue?: any;
   selfValue?: number | string;
@@ -45,7 +45,7 @@ export interface PageItem {
   ipCount?: number | string;
   behaviorCount?: any;
   outCount?: any;
-  option?: object;
+  option?: any;
   optionVisit?: object;
   activeOption?: object;
   healthyValue?: any;

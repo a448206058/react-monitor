@@ -89,7 +89,7 @@ const Home: React.FC<any> = observer((props) => {
       const hide = message.loading('Loading');
       setLoading(true)
       const result = await queryRule();
-
+      console.log(result.data)
       result.data.rows.map(async (item: TableListItem) => {
         if (!item.webMonitorId) {
           item.webMonitorId = "-1";
@@ -120,12 +120,16 @@ const Home: React.FC<any> = observer((props) => {
         item.healthyValue = 100 - parseFloat(((item.jsValue + item.selfValue + item.httpValue + item.sourceValue) / 4).toFixed(2));
 
         let oldValueSet = new Set();
-        oldValue.map(item => {
+        for(let item of oldValue){
           oldValueSet.add(item.customerKey);
-        })
-        newValue = newValue.filter(item => {
-          return !oldValueSet.has(item.customerKey)
-        })
+        }
+        let values = [];
+        for(let item of newValue){
+          if(!oldValueSet.has(item.customerKey)){
+            values.push(item)
+          }
+        }
+        newValue = values;
         item.newCount = newValue.length;
         item.option = {
           xAxis: {
@@ -143,10 +147,10 @@ const Home: React.FC<any> = observer((props) => {
             }
           ]
         };
-        activeValue.map(items => {
+        for(let items of activeValue){
           item.option.xAxis.data.push(items.days)
           item.option.series[0].data.push(items.COUNT);
-        })
+        }
       })
       setTimeout(() => {
         setRepos(result.data.rows)

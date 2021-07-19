@@ -5,24 +5,15 @@ import { Card, Row, Col, Select, Menu, Progress, Divider, Radio, Tooltip, List }
 import { queryPvCount, queryBehavior, queryCount, queryAlive, queryNew, queryOld, queryLoad, queryDay, queryJsError, queryJsErrorSort, queryHttp, updateRule, addRule, removeRule } from './service';
 
 import type { PageParam, PageItem } from './data.d';
-import { HourglassOutlined, QuestionCircleFilled, RightOutlined, DiffFilled, UsergroupDeleteOutlined, AndroidFilled, AppleFilled, WindowsFilled } from '@ant-design/icons'
+import { HourglassOutlined, QuestionCircleFilled, RightOutlined, DiffFilled, UsergroupDeleteOutlined, AndroidFilled, AppleFilled, WindowsFilled, AppstoreOutlined, SecurityScanOutlined} from '@ant-design/icons'
 
 import ReactEcharts from 'echarts-for-react'
 
-import {
-  AppstoreOutlined,
-  SecurityScanOutlined,
-  EnvironmentOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  ContainerOutlined,
-  MailOutlined
-} from '@ant-design/icons'
 import { load } from 'dotenv/types';
 
 const colors = ['#5470C6', '#EE6666']
 
-const option = {
+const option: any = {
   title: {
     text: '用户量统计'
   },
@@ -343,6 +334,7 @@ const Overview: React.FC<any> = observer((props) => {
       let oldValueSet = new Set();
       oldValue.map((item: any) => {
         oldValueSet.add(item.customerKey);
+        return true;
       })
       newValue = newValue.filter((item: any) => {
         return !oldValueSet.has(item.customerKey)
@@ -350,11 +342,12 @@ const Overview: React.FC<any> = observer((props) => {
 
       // 访问量
       // optionVisit
-      let pDays: [] = [];
-      let pCount: [] = [];
-      pvDay.data.map((item: object) => {
+      let pDays: any[] = [];
+      let pCount: any[] = [];
+      pvDay.data.map((item: any) => {
         pDays.push(item.days);
         pCount.push(item.COUNT);
+        return true;
       })
 
       optionVisit.xAxis.data = pDays;
@@ -364,22 +357,24 @@ const Overview: React.FC<any> = observer((props) => {
       let outMap = new Map();
       let outValue: any = [];
       pvCount.data.rows.map((item: any) => {
-        if (outMap.has(item.customerKey) && outMap.get(item.customerKey) != item.simpleUrl) {
+        if (outMap.has(item.customerKey) && outMap.get(item.customerKey) !== item.simpleUrl) {
           outValue.push(item.customerKey);
         }
         outMap.set(item.customerKey, item.simpleUrl)
         ipCount.push(item.monitorIp)
+        return true;
       })
       outValue = Array.from(new Set(outValue));
       ipCount = Array.from(new Set(ipCount))
 
-      let days: [] = []
-      let counts: [] = [];
+      let days: any[] = []
+      let counts: any[] = [];
 
       // // 用户量
       activeValue.data.map((item: any) => {
         days.push(item.days)
         counts.push(item.COUNT);
+        return true;
       })
 
       option.xAxis.data = days;
@@ -434,11 +429,11 @@ const Overview: React.FC<any> = observer((props) => {
 
       let loadMap = new Map();
 
-      let loadArr: [] = [];
-      loadCount.data.rows.map(item => {
-        ttfb += parseInt(item.ttfb);
-        domReady += parseInt(item.domReady);
-        loadPage += parseInt(item.loadPage);
+      let loadArr: any = [];
+      loadCount.data.rows.map((item: any) => {
+        ttfb += Number(item.ttfb);
+        domReady += Number(item.domReady);
+        loadPage += Number(item.loadPage);
 
         if (item.loadPage < 1000) {
           load1.push(item)
@@ -474,14 +469,16 @@ const Overview: React.FC<any> = observer((props) => {
             loadArr[loadMap.get(item.completeUrl)].connect += item.connect;
           }
         }
+        return true;
       })
 
-      loadArr.map(item => {
+      loadArr.map((item: any) => {
         item.loadPage = (item.loadPage / item.num).toFixed(2);
         item.domReady = (item.domReady / item.num).toFixed(2);
         item.request = (item.request / item.num).toFixed(2);
         item.lookupDomain = (item.lookupDomain / item.num).toFixed(2);
         item.connect = (item.connect / item.num).toFixed(2);
+        return true;
       })
       // areaOption.series[0].data = [];
       areaOption.series[0].data[0].value = load1.length;
@@ -524,7 +521,7 @@ const Overview: React.FC<any> = observer((props) => {
           </Col>
           <Col span={4}>
             <div className="text-center">频次(人均)</div>
-            <div className="fs-32 b text-center">{parseInt(repos.behaviorCount) / parseInt(repos.memberCount)}</div>
+            <div className="fs-32 b text-center">{Number(repos.behaviorCount) / Number(repos.memberCount)}</div>
           </Col>
           <Col span={4}>
             <div className="text-center">跳出率</div>
@@ -687,7 +684,7 @@ const Overview: React.FC<any> = observer((props) => {
   //  })])
 
   const listPage = (<div>{
-    repos.loadArr && repos.loadArr.map((item, index) => {
+    repos.loadArr && repos.loadArr.map((item: any, index: any) => {
       return <div className="mt-2" onClick={setLoadValue.bind(this, item)} key={item.name}><Radio.Button value="<1秒" className="chose_list">
         <Tooltip
           placement="topLeft"

@@ -2,7 +2,7 @@ import { extend } from 'umi-request';
 import { notification } from 'antd';
 // import router from 'umi/router';
 
-const codeMessage = {
+const codeMessage: any = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
   202: '一个请求已经进入后台排队（异步任务）。',
@@ -26,7 +26,7 @@ const codeMessage = {
 const errorHandler = (error: { response: Response }): Response => {
 
   const { response } = error;
-  if (response && response.status) {
+  if (response && response.status  !== -10000) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
 
@@ -79,11 +79,9 @@ request.interceptors.request.use((url, options) => {  // 此处为拦截器，�
   //   // router.push('/user/login');
   // }
 
-  // url = 'http://112.124.36.170:8009'+url;
+  url = 'http://112.124.36.170:8009'+url;
 
-  url = 'http://172.18.20.180:8009' + url;
-
-  // url = 'http://112.124.36.170:8009' + url;
+  // url = 'http://172.18.20.180:8009' + url;
 
   // url = 'http://192.168.1.104:8009' + url;
   // url = 'http://192.168.1.106:8009' + url;

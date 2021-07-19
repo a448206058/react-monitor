@@ -6,7 +6,7 @@ import { extend } from 'umi-request';
 import { notification } from 'antd';
 // import router from 'umi/router';
 
-const codeMessage = {
+const codeMessage: any = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
   202: '一个请求已经进入后台排队（异步任务）。',
@@ -30,7 +30,7 @@ const codeMessage = {
 const errorHandler = (error: { response: Response }): Response => {
 
   const { response } = error;
-  if (response && response.status) {
+  if (response && response.status !== 10000) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
 
@@ -55,7 +55,11 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
-request.interceptors.request.use(async (url, options) => {  // 此处为拦截器，每次发送请求之前判断能否取到token
+request.interceptors.request.use((url, options): any => {
+  // 此处为拦截器，每次发送请求之前判断能否取到token
+  let urls = 'http://172.18.20.180:8009' + url;
+
+  console.log(1111)
 
   if (sessionStorage.getItem('token')) {
     const headers = {
@@ -66,18 +70,20 @@ request.interceptors.request.use(async (url, options) => {  // 此处为拦截�
     };
     // url = 'http://workadminapi.xuqyfw.com'+url;
     console.log(url)
+
+
     return {
-      url,
+      urls,
       options: { ...options, headers },
     };
   } else {
-    if(url !== '/api/User/Login'){
+    if (urls !== '/api/User/Login') {
       window.location.href = "/user/login";
     }
     // url = 'http://workadminapi.xuqyfw.com'+url;
-    console.log(url)
+    console.log(urls)
     return {
-      url,
+      urls,
       options: { ...options },
     };
     // router.push('/user/login');

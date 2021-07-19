@@ -118,11 +118,11 @@ const javascriptError: React.FC = observer((props) => {
       <ReactEcharts
         option={option}
         style={{ height: '300px', width: '100%' }}
-        className={'react_for_echarts'}
+        className="react_for_echarts"
       />
 
       <Tabs defaultActiveKey="1">
-        <TabPane tab={tabIndex == 1 ? tabTitle : tabTitle1} key="1">
+        <TabPane tab={tabIndex === '1' ? tabTitle : tabTitle1} key="1">
           <div className="mb-2">2021-05-15</div>
         </TabPane>
       </Tabs>
@@ -132,7 +132,7 @@ const javascriptError: React.FC = observer((props) => {
         renderItem={item =>
           <List.Item>
             <div className="fs-12 flex wd_100s">
-              <span className="error_circle"></span><span className="fs-16 color-primary ml-4">{item.type}</span><span className="ml-4">{item.name}</span><AndroidFilled className="ml-4" />（{item.android}次）<AppleFilled className="ml-4" />（{item.iphone}次）<WindowsFilled className="ml-4" /><span>（{item.man}次）</span><div className="flex-right color-info">最近：{item.time}</div> <RightOutlined className="ml4" />
+              <span className="error_circle" /><span className="fs-16 color-primary ml-4">{item.type}</span><span className="ml-4">{item.name}</span><AndroidFilled className="ml-4" />（{item.android}次）<AppleFilled className="ml-4" />（{item.iphone}次）<WindowsFilled className="ml-4" /><span>（{item.man}次）</span><div className="flex-right color-info">最近：{item.time}</div> <RightOutlined className="ml4" />
             </div>
 
           </List.Item>}

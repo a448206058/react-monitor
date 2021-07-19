@@ -14,7 +14,7 @@ export interface TableListItem {
   sourceValue?: number;
   healthyValue?: any;
   newCount?: number;
-  option?: object;
+  option?: any;
 }
 
 export interface PageParam {
@@ -25,7 +25,7 @@ export interface PageParam {
   allCount?: number;
   oldCount?: number;
   newCount?: number;
-  option?: object;
+  option?: any;
   healthyValue?: any;
   jsValue?: number | string;
   httpValue?: string;
@@ -36,7 +36,6 @@ export interface PageParam {
 export interface QueryParam {
   webMonitorId?: string;
 }
-
 
 export interface TableListPagination {
   total: number;
