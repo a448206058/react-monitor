@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npx --max-old-space-size=2048 tsc && vite build",
     "build:dev": "tsc && vite build -m qa",
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/ test/unit test/e2e/specs",
     "serve": "vite preview"
