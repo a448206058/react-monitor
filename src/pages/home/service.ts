@@ -1,5 +1,4 @@
 import request from '@/utils/request';
-import { Console } from 'node:console';
 import type { TableListParams, TableListItem, QueryParam } from './data.d';
 
 export async function queryRule(params?: TableListParams) {
